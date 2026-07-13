@@ -35,32 +35,35 @@ An AI-powered web application that detects bone fractures from X-ray images usin
 
 ## 📂 Project Structure
 
-```
+```text
 Bone-Fracture-Detection/
 │
-├── app.py                     # Flask application
-├── predictions.py             # Prediction logic
-├── prediction_test.py         # Test script
-├── training_parts.py          # Train body part classifier
-├── training_fracture.py       # Train fracture models
-├── requirements.txt
-│
-├── templates/
-│   └── index.html
-│
+├── Dataset/                     # Training dataset
+├── plots/                       # Training accuracy and loss graphs
+├── PredictResults/              # Prediction output images/reports
 ├── static/
 │   ├── css/
 │   └── js/
 │
-├── uploads/
-├── images/
-├── Dataset/
-├── weights/
-│   ├── ResNet50_BodyParts.h5
-│   ├── ResNet50_Elbow_frac.h5
-│   ├── ResNet50_Hand_frac.h5
-│   └── ResNet50_Shoulder_frac.h5
+├── templates/
+│   └── index.html
 │
+├── test/
+│   ├── Elbow/
+│   ├── Hand/
+│   └── Shoulder/
+│
+├── uploads/                     # Uploaded X-ray images
+├── weights/                     # Trained ResNet50 models
+│
+├── app.py                       # Flask application
+├── predictions.py               # Prediction logic
+├── prediction_test.py           # Model testing script
+├── training_parts.py            # Body part classifier training
+├── training_fracture.py         # Fracture detection model training
+├── requirements.txt             # Project dependencies
+├── README.md
+└── .gitignore
 └── README.md
 ```
 
