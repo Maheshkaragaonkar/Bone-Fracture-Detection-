@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Fracture Detection System</title>
+    <meta name="description"
+        content="AI-based clinical decision support system for musculoskeletal X-ray classification.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <i class="fa-solid fa-bone logo-icon"></i>
+                <div class="logo-text">
+                    <h1>Bone Fracture Detection System</h1>
+                    <span class="logo-subtitle">Bone classification and fracture detection using deep learning</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span class="status-text">System Active</span>
+                </div>
+                <button id="rulesBtn" class="btn btn-secondary">
+                    <i class="fa-solid fa-book-medical"></i> Diagnostic Rules
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-grid">
+            <!-- Left Panel: Uploader & Control -->
+            <section class="panel upload-panel" aria-labelledby="uploadHeading">
+                <h2 id="uploadHeading" class="panel-title"><i class="fa-solid fa-file-import"></i> Upload X-Ray / Bone
+                    Image</h2>
+
+                <div class="upload-dropzone" id="dropzone">
+                    <input type="file" id="fileInput" accept="image/*" class="file-input-hidden">
+                    <div class="dropzone-content" id="dropzoneContent">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <p class="upload-text-main">Drag & drop X-Ray image here</p>
+                        <p class="upload-text-sub">or click to browse local files</p>
+                        <span class="file-limits">Supported formats: JPEG, PNG, WEBP (Max 16MB)</span>
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="imagePreview" src="" alt="Uploaded X-Ray preview">
+                        <div class="scan-laser" id="laser" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="control-actions">
+                    <button id="resetBtn" class="btn btn-danger" disabled>
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button id="predictBtn" class="btn btn-primary" disabled>
+                        <i class="fa-solid fa-microscope"></i> Run Diagnosis
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Results & Reports -->
+            <section class="panel results-panel" aria-labelledby="resultsHeading">
+                <h2 id="resultsHeading" class="panel-title"><i class="fa-solid fa-square-poll-vertical"></i> Clinical
+                    Findings</h2>
+
+                <!-- Initial Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="pulse-ring">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+                    <p class="empty-text">Awaiting X-Ray image upload...</p>
+                    <p class="empty-sub">Configure the file in the upload panel and trigger "Run Diagnosis"</p>
+                </div>
+
+                <!-- Diagnosis Output Container -->
+                <div class="findings-container" id="findingsContainer" style="display: none;">
+                    <div class="report-card" id="reportCard">
+                        <div class="report-header">
+                            <div class="report-title-group">
+                                <span class="report-label">AI Diagnostic Report</span>
+                                <h3 class="report-id" id="reportId">ID: #---</h3>
+                            </div>
+                            <span class="report-timestamp" id="reportTimestamp">--/--/---- --:--</span>
+                        </div>
+
+                        <div class="report-grid">
+                            <!-- Image View -->
+                            <div class="report-image-box">
+                                <img id="reportImage" src="" alt="Analyzed X-Ray">
+                            </div>
+
+                            <!-- Diagnosis Result Details -->
+                            <div class="report-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">Anatomical Region</span>
+                                    <div class="detail-value" id="resPart">
+                                        <i class="fa-solid fa-circle-nodes"></i> <span>--</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-group">
+                                    <span class="detail-label">Pathology Finding</span>
+                                    <div class="detail-value" id="resStatus">
+                                        <span class="badge">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-footer">
+                            <p class="footer-notice">This diagnosis is computer-generated and should be reviewed by a
+                                radiologist.</p>
+                        </div>
+                    </div>
+
+                    <div class="findings-actions">
+                        <button id="downloadBtn" class="btn btn-success">
+                            <i class="fa-solid fa-file-arrow-down"></i> Save Report (.PNG)
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Panel: Scan History -->
+        <section class="panel history-panel" aria-labelledby="historyHeading">
+            <h2 id="historyHeading" class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Session History
+            </h2>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Scan ID</th>
+                            <th>Timestamp</th>
+                            <th>Target Anatomy</th>
+                            <th>Clinical Finding</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr class="no-history">
+                            <td colspan="5">No scans recorded in this session.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Made By Mahesh Karagaonkar</p>
+        </footer>
+
+        <!-- Rules / Info Modal -->
+        <div class="modal-overlay" id="rulesModal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-circle-info"></i> Diagnostic Guidelines & Rules</h3>
+                    <button class="modal-close" id="closeModalBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-intro">The AI models evaluate radiographs based on standard anatomical guidelines.
+                        Here are the core classification rules used for diagnosis:</p>
+                    <div class="rules-visual">
+                        <img src="/images/rules.jpeg" alt="Musculoskeletal Diagnostic Guidelines">
+                    </div>
+                    <div class="rules-info-box">
+                        <h4>Elbow Classifications</h4>
+                        <p>Models detect fractures or anomalies in the humerus, radius, or ulna joints using ResNet50
+                            joint-level features.</p>
+
+                        <h4>Hand & Wrist Classifications</h4>
+                        <p>Evaluates fractures within the carpals, metacarpals, or phalanges, cross-referencing patient
+                            demographics where relevant.</p>
+
+                        <h4>Shoulder Classifications</h4>
+                        <p>Evaluates glenohumeral alignments, clavicle, and scapular anomalies to identify dislocations
+                            and subluxations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>
