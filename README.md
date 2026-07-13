@@ -205,12 +205,6 @@ Pillow
 Colorama
 ```
 
-Install using
-
-```bash
-pip install -r requirements.txt
-
-
 
 
 ## 👨‍💻 Author
