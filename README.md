@@ -1,6 +1,6 @@
 # Bone-Fracture-Detection
 
-An AI-powered web application that detects bone fractures from X-ray images using **TensorFlow**, **ResNet50**, and **Flask**. The system first identifies the body part (Elbow, Hand, or Shoulder) and then predicts whether the bone is **Fractured** or **Normal**.
+Flask based web application that detects bone fractures from X-ray images using **TensorFlow**, **ResNet50**, and **Flask**. The system first identifies the body part (Elbow, Hand, or Shoulder) and then predicts whether the bone is **Fractured** or **Normal**.
 
 ---
 
